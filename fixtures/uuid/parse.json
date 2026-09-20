@@ -1,0 +1,121 @@
+{
+  "suite": "uuid",
+  "version": 1,
+  "description": "Parsing and validating UUIDv7 text.",
+  "cases": [
+    {
+      "name": "valid lowercase",
+      "input": {
+        "op": "parse",
+        "uuid": "019960fc-bc7b-7123-aaaa-aaaaaaaaaaaa"
+      },
+      "expected": {
+        "canonical": "019960fc-bc7b-7123-aaaa-aaaaaaaaaaaa",
+        "timestamp_ms": "1758268800123"
+      }
+    },
+    {
+      "name": "valid uppercase is normalised",
+      "input": {
+        "op": "parse",
+        "uuid": "019960FC-BC7B-7123-AAAA-AAAAAAAAAAAA"
+      },
+      "expected": {
+        "canonical": "019960fc-bc7b-7123-aaaa-aaaaaaaaaaaa",
+        "timestamp_ms": "1758268800123"
+      }
+    },
+    {
+      "name": "all zero",
+      "input": {
+        "op": "parse",
+        "uuid": "00000000-0000-7000-8000-000000000000"
+      },
+      "expected": {
+        "canonical": "00000000-0000-7000-8000-000000000000",
+        "timestamp_ms": "0"
+      }
+    },
+    {
+      "name": "all maximum",
+      "input": {
+        "op": "parse",
+        "uuid": "ffffffff-ffff-7fff-bfff-ffffffffffff"
+      },
+      "expected": {
+        "canonical": "ffffffff-ffff-7fff-bfff-ffffffffffff",
+        "timestamp_ms": "281474976710655"
+      }
+    },
+    {
+      "name": "wrong version 4",
+      "input": {
+        "op": "parse",
+        "uuid": "3b241101-e2bb-4255-8caf-4136c566a962"
+      },
+      "expected": {
+        "error": "invalid_uuid"
+      }
+    },
+    {
+      "name": "wrong variant",
+      "input": {
+        "op": "parse",
+        "uuid": "01930000-0000-7000-c000-000000000000"
+      },
+      "expected": {
+        "error": "invalid_uuid"
+      }
+    },
+    {
+      "name": "missing hyphens",
+      "input": {
+        "op": "parse",
+        "uuid": "019960fcbc7b7123aaaaaaaaaaaaaaaa"
+      },
+      "expected": {
+        "error": "invalid_uuid"
+      }
+    },
+    {
+      "name": "too short",
+      "input": {
+        "op": "parse",
+        "uuid": "019960fc-bc7b-7123-aaaa-aaaaaaaaaaa"
+      },
+      "expected": {
+        "error": "invalid_uuid"
+      }
+    },
+    {
+      "name": "too long",
+      "input": {
+        "op": "parse",
+        "uuid": "019960fc-bc7b-7123-aaaa-aaaaaaaaaaaa0"
+      },
+      "expected": {
+        "error": "invalid_uuid"
+      }
+    },
+    {
+      "name": "non-hex character",
+      "input": {
+        "op": "parse",
+        "uuid": "019960fc-bc7b-7123-aaaa-aaaaaaaaaaag"
+      },
+      "expected": {
+        "error": "invalid_uuid"
+      }
+    },
+    {
+      "name": "empty string",
+      "input": {
+        "op": "parse",
+        "uuid": ""
+      },
+      "expected": {
+        "error": "invalid_uuid"
+      }
+    }
+  ]
+}

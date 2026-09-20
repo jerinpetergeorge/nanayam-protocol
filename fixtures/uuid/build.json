@@ -1,0 +1,151 @@
+{
+  "suite": "uuid",
+  "version": 1,
+  "description": "Assembling a UUIDv7 from its parts.",
+  "cases": [
+    {
+      "name": "typical id",
+      "input": {
+        "op": "build",
+        "timestamp_ms": "1758268800123",
+        "rand_a": 291,
+        "rand_b": "3074457345618258602"
+      },
+      "expected": {
+        "uuid": "019960fc-bc7b-7123-aaaa-aaaaaaaaaaaa"
+      }
+    },
+    {
+      "name": "all zero",
+      "input": {
+        "op": "build",
+        "timestamp_ms": "0",
+        "rand_a": 0,
+        "rand_b": "0"
+      },
+      "expected": {
+        "uuid": "00000000-0000-7000-8000-000000000000"
+      }
+    },
+    {
+      "name": "all maximum",
+      "input": {
+        "op": "build",
+        "timestamp_ms": "281474976710655",
+        "rand_a": 4095,
+        "rand_b": "4611686018427387903"
+      },
+      "expected": {
+        "uuid": "ffffffff-ffff-7fff-bfff-ffffffffffff"
+      }
+    },
+    {
+      "name": "timestamp only",
+      "input": {
+        "op": "build",
+        "timestamp_ms": "1758268800123",
+        "rand_a": 0,
+        "rand_b": "0"
+      },
+      "expected": {
+        "uuid": "019960fc-bc7b-7000-8000-000000000000"
+      }
+    },
+    {
+      "name": "rand_a only, high nibble",
+      "input": {
+        "op": "build",
+        "timestamp_ms": "0",
+        "rand_a": 3840,
+        "rand_b": "0"
+      },
+      "expected": {
+        "uuid": "00000000-0000-7f00-8000-000000000000"
+      }
+    },
+    {
+      "name": "rand_a only, low byte",
+      "input": {
+        "op": "build",
+        "timestamp_ms": "0",
+        "rand_a": 255,
+        "rand_b": "0"
+      },
+      "expected": {
+        "uuid": "00000000-0000-70ff-8000-000000000000"
+      }
+    },
+    {
+      "name": "rand_b only, top bits",
+      "input": {
+        "op": "build",
+        "timestamp_ms": "0",
+        "rand_a": 0,
+        "rand_b": "2305843009213693952"
+      },
+      "expected": {
+        "uuid": "00000000-0000-7000-a000-000000000000"
+      }
+    },
+    {
+      "name": "rand_b only, low bits",
+      "input": {
+        "op": "build",
+        "timestamp_ms": "0",
+        "rand_a": 0,
+        "rand_b": "1"
+      },
+      "expected": {
+        "uuid": "00000000-0000-7000-8000-000000000001"
+      }
+    },
+    {
+      "name": "timestamp above 48 bits",
+      "input": {
+        "op": "build",
+        "timestamp_ms": "281474976710656",
+        "rand_a": 0,
+        "rand_b": "0"
+      },
+      "expected": {
+        "error": "invalid_timestamp"
+      }
+    },
+    {
+      "name": "rand_a above 12 bits",
+      "input": {
+        "op": "build",
+        "timestamp_ms": "0",
+        "rand_a": 4096,
+        "rand_b": "0"
+      },
+      "expected": {
+        "error": "invalid_rand_a"
+      }
+    },
+    {
+      "name": "rand_b above 62 bits",
+      "input": {
+        "op": "build",
+        "timestamp_ms": "0",
+        "rand_a": 0,
+        "rand_b": "4611686018427387904"
+      },
+      "expected": {
+        "error": "invalid_rand_b"
+      }
+    },
+    {
+      "name": "negative timestamp",
+      "input": {
+        "op": "build",
+        "timestamp_ms": "-1",
+        "rand_a": 0,
+        "rand_b": "0"
+      },
+      "expected": {
+        "error": "invalid_timestamp"
+      }
+    }
+  ]
+}

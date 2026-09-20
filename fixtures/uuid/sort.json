@@ -1,0 +1,53 @@
+{
+  "suite": "uuid",
+  "version": 1,
+  "description": "Ordering of UUIDv7 ids.",
+  "cases": [
+    {
+      "name": "sorts by timestamp, then rand_a, then rand_b",
+      "input": {
+        "op": "sort",
+        "uuids": [
+          "019960fc-bc7b-7001-8000-000000000005",
+          "019960fc-bc7c-7000-8000-000000000000",
+          "019960fc-bc7b-7000-8000-000000000009",
+          "019960fc-bc00-7fff-8000-000000000001",
+          "019960fc-bc7b-7001-8000-000000000004"
+        ]
+      },
+      "expected": {
+        "sorted": [
+          "019960fc-bc00-7fff-8000-000000000001",
+          "019960fc-bc7b-7000-8000-000000000009",
+          "019960fc-bc7b-7001-8000-000000000004",
+          "019960fc-bc7b-7001-8000-000000000005",
+          "019960fc-bc7c-7000-8000-000000000000"
+        ]
+      }
+    },
+    {
+      "name": "single id",
+      "input": {
+        "op": "sort",
+        "uuids": [
+          "019960fc-bc7b-7001-8000-000000000005"
+        ]
+      },
+      "expected": {
+        "sorted": [
+          "019960fc-bc7b-7001-8000-000000000005"
+        ]
+      }
+    },
+    {
+      "name": "empty list",
+      "input": {
+        "op": "sort",
+        "uuids": []
+      },
+      "expected": {
+        "sorted": []
+      }
+    }
+  ]
+}

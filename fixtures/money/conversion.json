@@ -1,0 +1,482 @@
+{
+  "suite": "money",
+  "version": 1,
+  "description": "FX conversion with integer parts-per-million rates and half-away-from-zero rounding.",
+  "cases": [
+    {
+      "name": "INR to USD",
+      "input": {
+        "op": "convert",
+        "amount": {
+          "amount_minor": "100000",
+          "currency": "INR",
+          "exponent": 2
+        },
+        "to": {
+          "currency": "USD",
+          "exponent": 2
+        },
+        "rate_ppm": "11890"
+      },
+      "expected": {
+        "amount_minor": "1189",
+        "currency": "USD",
+        "exponent": 2
+      }
+    },
+    {
+      "name": "USD to INR rounds a half up",
+      "input": {
+        "op": "convert",
+        "amount": {
+          "amount_minor": "1189",
+          "currency": "USD",
+          "exponent": 2
+        },
+        "to": {
+          "currency": "INR",
+          "exponent": 2
+        },
+        "rate_ppm": "83500000"
+      },
+      "expected": {
+        "amount_minor": "99282",
+        "currency": "INR",
+        "exponent": 2
+      }
+    },
+    {
+      "name": "half rounds away from zero, positive",
+      "input": {
+        "op": "convert",
+        "amount": {
+          "amount_minor": "5",
+          "currency": "INR",
+          "exponent": 2
+        },
+        "to": {
+          "currency": "USD",
+          "exponent": 2
+        },
+        "rate_ppm": "100000"
+      },
+      "expected": {
+        "amount_minor": "1",
+        "currency": "USD",
+        "exponent": 2
+      }
+    },
+    {
+      "name": "half rounds away from zero, negative",
+      "input": {
+        "op": "convert",
+        "amount": {
+          "amount_minor": "-5",
+          "currency": "INR",
+          "exponent": 2
+        },
+        "to": {
+          "currency": "USD",
+          "exponent": 2
+        },
+        "rate_ppm": "100000"
+      },
+      "expected": {
+        "amount_minor": "-1",
+        "currency": "USD",
+        "exponent": 2
+      }
+    },
+    {
+      "name": "below a half rounds down",
+      "input": {
+        "op": "convert",
+        "amount": {
+          "amount_minor": "4",
+          "currency": "INR",
+          "exponent": 2
+        },
+        "to": {
+          "currency": "USD",
+          "exponent": 2
+        },
+        "rate_ppm": "100000"
+      },
+      "expected": {
+        "amount_minor": "0",
+        "currency": "USD",
+        "exponent": 2
+      }
+    },
+    {
+      "name": "2.5 rounds to 3, not banker's 2",
+      "input": {
+        "op": "convert",
+        "amount": {
+          "amount_minor": "25",
+          "currency": "INR",
+          "exponent": 2
+        },
+        "to": {
+          "currency": "USD",
+          "exponent": 2
+        },
+        "rate_ppm": "100000"
+      },
+      "expected": {
+        "amount_minor": "3",
+        "currency": "USD",
+        "exponent": 2
+      }
+    },
+    {
+      "name": "3.5 rounds to 4",
+      "input": {
+        "op": "convert",
+        "amount": {
+          "amount_minor": "35",
+          "currency": "INR",
+          "exponent": 2
+        },
+        "to": {
+          "currency": "USD",
+          "exponent": 2
+        },
+        "rate_ppm": "100000"
+      },
+      "expected": {
+        "amount_minor": "4",
+        "currency": "USD",
+        "exponent": 2
+      }
+    },
+    {
+      "name": "negative 2.5 rounds to minus 3",
+      "input": {
+        "op": "convert",
+        "amount": {
+          "amount_minor": "-25",
+          "currency": "INR",
+          "exponent": 2
+        },
+        "to": {
+          "currency": "USD",
+          "exponent": 2
+        },
+        "rate_ppm": "100000"
+      },
+      "expected": {
+        "amount_minor": "-3",
+        "currency": "USD",
+        "exponent": 2
+      }
+    },
+    {
+      "name": "two decimals to zero decimals",
+      "input": {
+        "op": "convert",
+        "amount": {
+          "amount_minor": "100000",
+          "currency": "INR",
+          "exponent": 2
+        },
+        "to": {
+          "currency": "JPY",
+          "exponent": 0
+        },
+        "rate_ppm": "1750000"
+      },
+      "expected": {
+        "amount_minor": "1750",
+        "currency": "JPY",
+        "exponent": 0
+      }
+    },
+    {
+      "name": "zero decimals to two decimals",
+      "input": {
+        "op": "convert",
+        "amount": {
+          "amount_minor": "1750",
+          "currency": "JPY",
+          "exponent": 0
+        },
+        "to": {
+          "currency": "INR",
+          "exponent": 2
+        },
+        "rate_ppm": "571428"
+      },
+      "expected": {
+        "amount_minor": "100000",
+        "currency": "INR",
+        "exponent": 2
+      }
+    },
+    {
+      "name": "three decimals to two decimals",
+      "input": {
+        "op": "convert",
+        "amount": {
+          "amount_minor": "1000",
+          "currency": "KWD",
+          "exponent": 3
+        },
+        "to": {
+          "currency": "INR",
+          "exponent": 2
+        },
+        "rate_ppm": "270000000"
+      },
+      "expected": {
+        "amount_minor": "27000",
+        "currency": "INR",
+        "exponent": 2
+      }
+    },
+    {
+      "name": "two decimals to three decimals",
+      "input": {
+        "op": "convert",
+        "amount": {
+          "amount_minor": "27000",
+          "currency": "INR",
+          "exponent": 2
+        },
+        "to": {
+          "currency": "KWD",
+          "exponent": 3
+        },
+        "rate_ppm": "3703"
+      },
+      "expected": {
+        "amount_minor": "1000",
+        "currency": "KWD",
+        "exponent": 3
+      }
+    },
+    {
+      "name": "identity rate keeps the amount",
+      "input": {
+        "op": "convert",
+        "amount": {
+          "amount_minor": "12345",
+          "currency": "INR",
+          "exponent": 2
+        },
+        "to": {
+          "currency": "INR",
+          "exponent": 2
+        },
+        "rate_ppm": "1000000"
+      },
+      "expected": {
+        "amount_minor": "12345",
+        "currency": "INR",
+        "exponent": 2
+      }
+    },
+    {
+      "name": "zero stays zero",
+      "input": {
+        "op": "convert",
+        "amount": {
+          "amount_minor": "0",
+          "currency": "INR",
+          "exponent": 2
+        },
+        "to": {
+          "currency": "USD",
+          "exponent": 2
+        },
+        "rate_ppm": "11890"
+      },
+      "expected": {
+        "amount_minor": "0",
+        "currency": "USD",
+        "exponent": 2
+      }
+    },
+    {
+      "name": "negative amount",
+      "input": {
+        "op": "convert",
+        "amount": {
+          "amount_minor": "-100000",
+          "currency": "INR",
+          "exponent": 2
+        },
+        "to": {
+          "currency": "USD",
+          "exponent": 2
+        },
+        "rate_ppm": "11890"
+      },
+      "expected": {
+        "amount_minor": "-1189",
+        "currency": "USD",
+        "exponent": 2
+      }
+    },
+    {
+      "name": "intermediate product exceeds 64 bits",
+      "input": {
+        "op": "convert",
+        "amount": {
+          "amount_minor": "9000000000000000",
+          "currency": "INR",
+          "exponent": 2
+        },
+        "to": {
+          "currency": "USD",
+          "exponent": 2
+        },
+        "rate_ppm": "11890"
+      },
+      "expected": {
+        "amount_minor": "107010000000000",
+        "currency": "USD",
+        "exponent": 2
+      }
+    },
+    {
+      "name": "large exact conversion",
+      "input": {
+        "op": "convert",
+        "amount": {
+          "amount_minor": "9000000000000000",
+          "currency": "INR",
+          "exponent": 2
+        },
+        "to": {
+          "currency": "INR",
+          "exponent": 2
+        },
+        "rate_ppm": "1000000"
+      },
+      "expected": {
+        "amount_minor": "9000000000000000",
+        "currency": "INR",
+        "exponent": 2
+      }
+    },
+    {
+      "name": "int64 min at identity rate",
+      "input": {
+        "op": "convert",
+        "amount": {
+          "amount_minor": "-9223372036854775808",
+          "currency": "INR",
+          "exponent": 2
+        },
+        "to": {
+          "currency": "INR",
+          "exponent": 2
+        },
+        "rate_ppm": "1000000"
+      },
+      "expected": {
+        "amount_minor": "-9223372036854775808",
+        "currency": "INR",
+        "exponent": 2
+      }
+    },
+    {
+      "name": "result overflows",
+      "input": {
+        "op": "convert",
+        "amount": {
+          "amount_minor": "9223372036854775807",
+          "currency": "INR",
+          "exponent": 2
+        },
+        "to": {
+          "currency": "INR",
+          "exponent": 2
+        },
+        "rate_ppm": "83500000"
+      },
+      "expected": {
+        "error": "overflow"
+      }
+    },
+    {
+      "name": "result overflows on the negative side",
+      "input": {
+        "op": "convert",
+        "amount": {
+          "amount_minor": "-9223372036854775808",
+          "currency": "INR",
+          "exponent": 2
+        },
+        "to": {
+          "currency": "INR",
+          "exponent": 2
+        },
+        "rate_ppm": "2000000"
+      },
+      "expected": {
+        "error": "overflow"
+      }
+    },
+    {
+      "name": "zero rate is invalid",
+      "input": {
+        "op": "convert",
+        "amount": {
+          "amount_minor": "100",
+          "currency": "INR",
+          "exponent": 2
+        },
+        "to": {
+          "currency": "USD",
+          "exponent": 2
+        },
+        "rate_ppm": "0"
+      },
+      "expected": {
+        "error": "invalid_rate"
+      }
+    },
+    {
+      "name": "negative rate is invalid",
+      "input": {
+        "op": "convert",
+        "amount": {
+          "amount_minor": "100",
+          "currency": "INR",
+          "exponent": 2
+        },
+        "to": {
+          "currency": "USD",
+          "exponent": 2
+        },
+        "rate_ppm": "-5"
+      },
+      "expected": {
+        "error": "invalid_rate"
+      }
+    },
+    {
+      "name": "tiny rate rounds to zero",
+      "input": {
+        "op": "convert",
+        "amount": {
+          "amount_minor": "100",
+          "currency": "INR",
+          "exponent": 2
+        },
+        "to": {
+          "currency": "USD",
+          "exponent": 2
+        },
+        "rate_ppm": "1"
+      },
+      "expected": {
+        "amount_minor": "0",
+        "currency": "USD",
+        "exponent": 2
+      }
+    }
+  ]
+}

@@ -10,7 +10,7 @@ This repository contains **no product code**. It holds language-agnostic files t
 | `fixtures/` | Test vectors as JSON: "given this input, the correct output is exactly this" |
 | `openapi/` | A copy of the server's OpenAPI document (the source of truth lives in `nanayam-django`) |
 | `schema/` | JSON Schema that every fixture file must satisfy |
-| `scripts/` | Tooling, currently the fixture validator |
+| `scripts/` | `validate_fixtures.py` checks every fixture against the schema; `generate_vectors.py` authors the money and uuid vectors |
 
 ## Fixtures
 
@@ -29,10 +29,20 @@ Each fixture file describes one suite and lives in the directory named after it:
 
 Both implementations load every file, run each case, and compare the result to `expected`. A change to a fixture is a change to the contract and needs both sides updated.
 
-Validate locally:
+Suites so far:
+
+| Suite | Files | Covers |
+|---|---|---|
+| `money` | `arithmetic.json`, `conversion.json` | Construction, add, subtract, negate, abs, compare, FX conversion with integer parts-per-million rates |
+| `uuid` | `build.json`, `parse.json`, `sort.json` | UUIDv7 layout, parsing and ordering |
+
+The behaviour these vectors pin down is written in [`spec/money-and-ids.md`](spec/money-and-ids.md). Every 64-bit integer in a fixture is a decimal **string**, because JSON numbers lose precision above 2^53 in some languages.
+
+The money and uuid files are **generated** by `scripts/generate_vectors.py`, a small reference implementation using exact arbitrary-precision integers that shares no code with any client. Edit the generator, not the JSON, then regenerate; CI fails if the committed files differ from the generator's output.
 
 ```sh
-uv run --with jsonschema python scripts/validate_fixtures.py
+uv run python scripts/generate_vectors.py                        # regenerate
+uv run --with jsonschema python scripts/validate_fixtures.py     # validate against the schema
 ```
 
 ## Versioning

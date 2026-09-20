@@ -1,0 +1,839 @@
+{
+  "suite": "money",
+  "version": 1,
+  "description": "Construction, add, subtract, negate, abs and compare, including int64 edges.",
+  "cases": [
+    {
+      "name": "add two INR amounts",
+      "input": {
+        "op": "add",
+        "a": {
+          "amount_minor": "12345",
+          "currency": "INR",
+          "exponent": 2
+        },
+        "b": {
+          "amount_minor": "655",
+          "currency": "INR",
+          "exponent": 2
+        }
+      },
+      "expected": {
+        "amount_minor": "13000",
+        "currency": "INR",
+        "exponent": 2
+      }
+    },
+    {
+      "name": "add positive and negative",
+      "input": {
+        "op": "add",
+        "a": {
+          "amount_minor": "1000",
+          "currency": "INR",
+          "exponent": 2
+        },
+        "b": {
+          "amount_minor": "-2500",
+          "currency": "INR",
+          "exponent": 2
+        }
+      },
+      "expected": {
+        "amount_minor": "-1500",
+        "currency": "INR",
+        "exponent": 2
+      }
+    },
+    {
+      "name": "add zero",
+      "input": {
+        "op": "add",
+        "a": {
+          "amount_minor": "777",
+          "currency": "INR",
+          "exponent": 2
+        },
+        "b": {
+          "amount_minor": "0",
+          "currency": "INR",
+          "exponent": 2
+        }
+      },
+      "expected": {
+        "amount_minor": "777",
+        "currency": "INR",
+        "exponent": 2
+      }
+    },
+    {
+      "name": "add zero-decimal currency",
+      "input": {
+        "op": "add",
+        "a": {
+          "amount_minor": "500",
+          "currency": "JPY",
+          "exponent": 0
+        },
+        "b": {
+          "amount_minor": "250",
+          "currency": "JPY",
+          "exponent": 0
+        }
+      },
+      "expected": {
+        "amount_minor": "750",
+        "currency": "JPY",
+        "exponent": 0
+      }
+    },
+    {
+      "name": "add three-decimal currency",
+      "input": {
+        "op": "add",
+        "a": {
+          "amount_minor": "1500",
+          "currency": "KWD",
+          "exponent": 3
+        },
+        "b": {
+          "amount_minor": "2",
+          "currency": "KWD",
+          "exponent": 3
+        }
+      },
+      "expected": {
+        "amount_minor": "1502",
+        "currency": "KWD",
+        "exponent": 3
+      }
+    },
+    {
+      "name": "add across 2^53",
+      "input": {
+        "op": "add",
+        "a": {
+          "amount_minor": "9007199254740993",
+          "currency": "INR",
+          "exponent": 2
+        },
+        "b": {
+          "amount_minor": "2",
+          "currency": "INR",
+          "exponent": 2
+        }
+      },
+      "expected": {
+        "amount_minor": "9007199254740995",
+        "currency": "INR",
+        "exponent": 2
+      }
+    },
+    {
+      "name": "add to int64 max, no change",
+      "input": {
+        "op": "add",
+        "a": {
+          "amount_minor": "9223372036854775807",
+          "currency": "INR",
+          "exponent": 2
+        },
+        "b": {
+          "amount_minor": "0",
+          "currency": "INR",
+          "exponent": 2
+        }
+      },
+      "expected": {
+        "amount_minor": "9223372036854775807",
+        "currency": "INR",
+        "exponent": 2
+      }
+    },
+    {
+      "name": "add int64 max plus one overflows",
+      "input": {
+        "op": "add",
+        "a": {
+          "amount_minor": "9223372036854775807",
+          "currency": "INR",
+          "exponent": 2
+        },
+        "b": {
+          "amount_minor": "1",
+          "currency": "INR",
+          "exponent": 2
+        }
+      },
+      "expected": {
+        "error": "overflow"
+      }
+    },
+    {
+      "name": "add int64 min plus minus one overflows",
+      "input": {
+        "op": "add",
+        "a": {
+          "amount_minor": "-9223372036854775808",
+          "currency": "INR",
+          "exponent": 2
+        },
+        "b": {
+          "amount_minor": "-1",
+          "currency": "INR",
+          "exponent": 2
+        }
+      },
+      "expected": {
+        "error": "overflow"
+      }
+    },
+    {
+      "name": "add int64 min and max gives minus one",
+      "input": {
+        "op": "add",
+        "a": {
+          "amount_minor": "-9223372036854775808",
+          "currency": "INR",
+          "exponent": 2
+        },
+        "b": {
+          "amount_minor": "9223372036854775807",
+          "currency": "INR",
+          "exponent": 2
+        }
+      },
+      "expected": {
+        "amount_minor": "-1",
+        "currency": "INR",
+        "exponent": 2
+      }
+    },
+    {
+      "name": "add different currencies",
+      "input": {
+        "op": "add",
+        "a": {
+          "amount_minor": "100",
+          "currency": "INR",
+          "exponent": 2
+        },
+        "b": {
+          "amount_minor": "100",
+          "currency": "USD",
+          "exponent": 2
+        }
+      },
+      "expected": {
+        "error": "currency_mismatch"
+      }
+    },
+    {
+      "name": "add same currency, different exponent",
+      "input": {
+        "op": "add",
+        "a": {
+          "amount_minor": "100",
+          "currency": "INR",
+          "exponent": 2
+        },
+        "b": {
+          "amount_minor": "100",
+          "currency": "INR",
+          "exponent": 3
+        }
+      },
+      "expected": {
+        "error": "exponent_mismatch"
+      }
+    },
+    {
+      "name": "add different currency and exponent reports currency first",
+      "input": {
+        "op": "add",
+        "a": {
+          "amount_minor": "100",
+          "currency": "INR",
+          "exponent": 2
+        },
+        "b": {
+          "amount_minor": "100",
+          "currency": "JPY",
+          "exponent": 0
+        }
+      },
+      "expected": {
+        "error": "currency_mismatch"
+      }
+    },
+    {
+      "name": "subtract two INR amounts",
+      "input": {
+        "op": "subtract",
+        "a": {
+          "amount_minor": "12345",
+          "currency": "INR",
+          "exponent": 2
+        },
+        "b": {
+          "amount_minor": "345",
+          "currency": "INR",
+          "exponent": 2
+        }
+      },
+      "expected": {
+        "amount_minor": "12000",
+        "currency": "INR",
+        "exponent": 2
+      }
+    },
+    {
+      "name": "subtract to a negative result",
+      "input": {
+        "op": "subtract",
+        "a": {
+          "amount_minor": "100",
+          "currency": "INR",
+          "exponent": 2
+        },
+        "b": {
+          "amount_minor": "250",
+          "currency": "INR",
+          "exponent": 2
+        }
+      },
+      "expected": {
+        "amount_minor": "-150",
+        "currency": "INR",
+        "exponent": 2
+      }
+    },
+    {
+      "name": "subtract equal amounts",
+      "input": {
+        "op": "subtract",
+        "a": {
+          "amount_minor": "4242",
+          "currency": "INR",
+          "exponent": 2
+        },
+        "b": {
+          "amount_minor": "4242",
+          "currency": "INR",
+          "exponent": 2
+        }
+      },
+      "expected": {
+        "amount_minor": "0",
+        "currency": "INR",
+        "exponent": 2
+      }
+    },
+    {
+      "name": "subtract from int64 min overflows",
+      "input": {
+        "op": "subtract",
+        "a": {
+          "amount_minor": "-9223372036854775808",
+          "currency": "INR",
+          "exponent": 2
+        },
+        "b": {
+          "amount_minor": "1",
+          "currency": "INR",
+          "exponent": 2
+        }
+      },
+      "expected": {
+        "error": "overflow"
+      }
+    },
+    {
+      "name": "subtract int64 min from zero overflows",
+      "input": {
+        "op": "subtract",
+        "a": {
+          "amount_minor": "0",
+          "currency": "INR",
+          "exponent": 2
+        },
+        "b": {
+          "amount_minor": "-9223372036854775808",
+          "currency": "INR",
+          "exponent": 2
+        }
+      },
+      "expected": {
+        "error": "overflow"
+      }
+    },
+    {
+      "name": "subtract minus one from int64 max overflows",
+      "input": {
+        "op": "subtract",
+        "a": {
+          "amount_minor": "9223372036854775807",
+          "currency": "INR",
+          "exponent": 2
+        },
+        "b": {
+          "amount_minor": "-1",
+          "currency": "INR",
+          "exponent": 2
+        }
+      },
+      "expected": {
+        "error": "overflow"
+      }
+    },
+    {
+      "name": "subtract int64 max from int64 min overflows",
+      "input": {
+        "op": "subtract",
+        "a": {
+          "amount_minor": "-9223372036854775808",
+          "currency": "INR",
+          "exponent": 2
+        },
+        "b": {
+          "amount_minor": "9223372036854775807",
+          "currency": "INR",
+          "exponent": 2
+        }
+      },
+      "expected": {
+        "error": "overflow"
+      }
+    },
+    {
+      "name": "subtract different currencies",
+      "input": {
+        "op": "subtract",
+        "a": {
+          "amount_minor": "100",
+          "currency": "INR",
+          "exponent": 2
+        },
+        "b": {
+          "amount_minor": "50",
+          "currency": "EUR",
+          "exponent": 2
+        }
+      },
+      "expected": {
+        "error": "currency_mismatch"
+      }
+    },
+    {
+      "name": "negate positive",
+      "input": {
+        "op": "negate",
+        "a": {
+          "amount_minor": "500",
+          "currency": "INR",
+          "exponent": 2
+        }
+      },
+      "expected": {
+        "amount_minor": "-500",
+        "currency": "INR",
+        "exponent": 2
+      }
+    },
+    {
+      "name": "negate negative",
+      "input": {
+        "op": "negate",
+        "a": {
+          "amount_minor": "-500",
+          "currency": "INR",
+          "exponent": 2
+        }
+      },
+      "expected": {
+        "amount_minor": "500",
+        "currency": "INR",
+        "exponent": 2
+      }
+    },
+    {
+      "name": "negate zero",
+      "input": {
+        "op": "negate",
+        "a": {
+          "amount_minor": "0",
+          "currency": "INR",
+          "exponent": 2
+        }
+      },
+      "expected": {
+        "amount_minor": "0",
+        "currency": "INR",
+        "exponent": 2
+      }
+    },
+    {
+      "name": "negate int64 max",
+      "input": {
+        "op": "negate",
+        "a": {
+          "amount_minor": "9223372036854775807",
+          "currency": "INR",
+          "exponent": 2
+        }
+      },
+      "expected": {
+        "amount_minor": "-9223372036854775807",
+        "currency": "INR",
+        "exponent": 2
+      }
+    },
+    {
+      "name": "negate int64 min overflows",
+      "input": {
+        "op": "negate",
+        "a": {
+          "amount_minor": "-9223372036854775808",
+          "currency": "INR",
+          "exponent": 2
+        }
+      },
+      "expected": {
+        "error": "overflow"
+      }
+    },
+    {
+      "name": "abs of negative",
+      "input": {
+        "op": "abs",
+        "a": {
+          "amount_minor": "-1234",
+          "currency": "INR",
+          "exponent": 2
+        }
+      },
+      "expected": {
+        "amount_minor": "1234",
+        "currency": "INR",
+        "exponent": 2
+      }
+    },
+    {
+      "name": "abs of positive",
+      "input": {
+        "op": "abs",
+        "a": {
+          "amount_minor": "1234",
+          "currency": "INR",
+          "exponent": 2
+        }
+      },
+      "expected": {
+        "amount_minor": "1234",
+        "currency": "INR",
+        "exponent": 2
+      }
+    },
+    {
+      "name": "abs of int64 min overflows",
+      "input": {
+        "op": "abs",
+        "a": {
+          "amount_minor": "-9223372036854775808",
+          "currency": "INR",
+          "exponent": 2
+        }
+      },
+      "expected": {
+        "error": "overflow"
+      }
+    },
+    {
+      "name": "compare less",
+      "input": {
+        "op": "compare",
+        "a": {
+          "amount_minor": "100",
+          "currency": "INR",
+          "exponent": 2
+        },
+        "b": {
+          "amount_minor": "200",
+          "currency": "INR",
+          "exponent": 2
+        }
+      },
+      "expected": {
+        "result": -1
+      }
+    },
+    {
+      "name": "compare equal",
+      "input": {
+        "op": "compare",
+        "a": {
+          "amount_minor": "200",
+          "currency": "INR",
+          "exponent": 2
+        },
+        "b": {
+          "amount_minor": "200",
+          "currency": "INR",
+          "exponent": 2
+        }
+      },
+      "expected": {
+        "result": 0
+      }
+    },
+    {
+      "name": "compare greater",
+      "input": {
+        "op": "compare",
+        "a": {
+          "amount_minor": "300",
+          "currency": "INR",
+          "exponent": 2
+        },
+        "b": {
+          "amount_minor": "200",
+          "currency": "INR",
+          "exponent": 2
+        }
+      },
+      "expected": {
+        "result": 1
+      }
+    },
+    {
+      "name": "compare negative with positive",
+      "input": {
+        "op": "compare",
+        "a": {
+          "amount_minor": "-1",
+          "currency": "INR",
+          "exponent": 2
+        },
+        "b": {
+          "amount_minor": "1",
+          "currency": "INR",
+          "exponent": 2
+        }
+      },
+      "expected": {
+        "result": -1
+      }
+    },
+    {
+      "name": "compare across 2^53",
+      "input": {
+        "op": "compare",
+        "a": {
+          "amount_minor": "9007199254740993",
+          "currency": "INR",
+          "exponent": 2
+        },
+        "b": {
+          "amount_minor": "9007199254740992",
+          "currency": "INR",
+          "exponent": 2
+        }
+      },
+      "expected": {
+        "result": 1
+      }
+    },
+    {
+      "name": "compare extremes",
+      "input": {
+        "op": "compare",
+        "a": {
+          "amount_minor": "-9223372036854775808",
+          "currency": "INR",
+          "exponent": 2
+        },
+        "b": {
+          "amount_minor": "9223372036854775807",
+          "currency": "INR",
+          "exponent": 2
+        }
+      },
+      "expected": {
+        "result": -1
+      }
+    },
+    {
+      "name": "compare different currencies",
+      "input": {
+        "op": "compare",
+        "a": {
+          "amount_minor": "1",
+          "currency": "INR",
+          "exponent": 2
+        },
+        "b": {
+          "amount_minor": "1",
+          "currency": "USD",
+          "exponent": 2
+        }
+      },
+      "expected": {
+        "error": "currency_mismatch"
+      }
+    },
+    {
+      "name": "construct a valid INR amount",
+      "input": {
+        "op": "construct",
+        "amount_minor": "12345",
+        "currency": "INR",
+        "exponent": 2
+      },
+      "expected": {
+        "amount_minor": "12345",
+        "currency": "INR",
+        "exponent": 2
+      }
+    },
+    {
+      "name": "construct int64 min",
+      "input": {
+        "op": "construct",
+        "amount_minor": "-9223372036854775808",
+        "currency": "INR",
+        "exponent": 2
+      },
+      "expected": {
+        "amount_minor": "-9223372036854775808",
+        "currency": "INR",
+        "exponent": 2
+      }
+    },
+    {
+      "name": "construct int64 max",
+      "input": {
+        "op": "construct",
+        "amount_minor": "9223372036854775807",
+        "currency": "INR",
+        "exponent": 2
+      },
+      "expected": {
+        "amount_minor": "9223372036854775807",
+        "currency": "INR",
+        "exponent": 2
+      }
+    },
+    {
+      "name": "construct exponent 0",
+      "input": {
+        "op": "construct",
+        "amount_minor": "1",
+        "currency": "JPY",
+        "exponent": 0
+      },
+      "expected": {
+        "amount_minor": "1",
+        "currency": "JPY",
+        "exponent": 0
+      }
+    },
+    {
+      "name": "construct exponent 18",
+      "input": {
+        "op": "construct",
+        "amount_minor": "1",
+        "currency": "XXX",
+        "exponent": 18
+      },
+      "expected": {
+        "amount_minor": "1",
+        "currency": "XXX",
+        "exponent": 18
+      }
+    },
+    {
+      "name": "construct lowercase currency",
+      "input": {
+        "op": "construct",
+        "amount_minor": "1",
+        "currency": "inr",
+        "exponent": 2
+      },
+      "expected": {
+        "error": "invalid_currency"
+      }
+    },
+    {
+      "name": "construct two-letter currency",
+      "input": {
+        "op": "construct",
+        "amount_minor": "1",
+        "currency": "IN",
+        "exponent": 2
+      },
+      "expected": {
+        "error": "invalid_currency"
+      }
+    },
+    {
+      "name": "construct four-letter currency",
+      "input": {
+        "op": "construct",
+        "amount_minor": "1",
+        "currency": "INRR",
+        "exponent": 2
+      },
+      "expected": {
+        "error": "invalid_currency"
+      }
+    },
+    {
+      "name": "construct currency with a digit",
+      "input": {
+        "op": "construct",
+        "amount_minor": "1",
+        "currency": "IN1",
+        "exponent": 2
+      },
+      "expected": {
+        "error": "invalid_currency"
+      }
+    },
+    {
+      "name": "construct negative exponent",
+      "input": {
+        "op": "construct",
+        "amount_minor": "1",
+        "currency": "INR",
+        "exponent": -1
+      },
+      "expected": {
+        "error": "invalid_exponent"
+      }
+    },
+    {
+      "name": "construct exponent 19",
+      "input": {
+        "op": "construct",
+        "amount_minor": "1",
+        "currency": "INR",
+        "exponent": 19
+      },
+      "expected": {
+        "error": "invalid_exponent"
+      }
+    },
+    {
+      "name": "construct invalid currency and exponent reports currency first",
+      "input": {
+        "op": "construct",
+        "amount_minor": "1",
+        "currency": "in",
+        "exponent": 99
+      },
+      "expected": {
+        "error": "invalid_currency"
+      }
+    }
+  ]
+}
