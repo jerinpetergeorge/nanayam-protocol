@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nanayam.app/schema/fixture.schema.json",
+  "title": "Nanayam test-vector file",
+  "description": "One suite of input/expected cases consumed by every implementation. Refined in E03-T04-S1.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["suite", "version", "description", "cases"],
+  "properties": {
+    "suite": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*$",
+      "description": "Must equal the name of the directory the file lives in."
+    },
+    "version": { "type": "integer", "minimum": 1 },
+    "description": { "type": "string", "minLength": 1 },
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "input", "expected"],
+        "properties": {
+          "name": { "type": "string", "minLength": 1 },
+          "input": {},
+          "expected": {}
+        }
+      }
+    }
+  }
+}

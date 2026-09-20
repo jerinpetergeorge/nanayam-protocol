@@ -1,0 +1,16 @@
+{
+  "suite": "money",
+  "version": 1,
+  "description": "Placeholder vector proving the fixture pipeline works. Real money vectors arrive with E03-T04.",
+  "cases": [
+    {
+      "name": "add two INR amounts in minor units",
+      "input": {
+        "op": "add",
+        "a": { "amount_minor": 12345, "currency": "INR", "exponent": 2 },
+        "b": { "amount_minor": 655, "currency": "INR", "exponent": 2 }
+      },
+      "expected": { "amount_minor": 13000, "currency": "INR", "exponent": 2 }
+    }
+  ]
+}
